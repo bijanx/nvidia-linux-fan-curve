@@ -1,4 +1,5 @@
 #!/bin/bash
+#should be run as root
 
 #temperature that should trigger 100% GPU fan utilization
 MAX_GPU_TEMP=75
