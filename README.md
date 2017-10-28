@@ -1,1 +1,3 @@
-# nvidia-linux-cpu-curve
+# nvidia-linux-fan-curve
+
+Should be run as root

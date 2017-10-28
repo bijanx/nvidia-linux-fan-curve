@@ -17,18 +17,18 @@ BASELINE_GPU_TEMP=35
 BASELINE_FAN_PERCENTAGE=20
 
 #seconds to wait between fan speed updates
-REFRESH_RATE=5
+REFRESH_RATE=8
 
 echo "GPU fan controller service started."
 export DISPLAY=:0
 export XAUTHORITY=/var/run/lightdm/root/:0
 
 for gpu_id in $GPU_IDS; do
-  nvidia-settings -a [gpu:$GPU_ID]/GPUFanControlState=1 > /dev/null
+  DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings -a [gpu:$GPU_ID]/GPUFanControlState=1 > /dev/null
 done
 
 HOSTNAME=$(hostname)
-check=$(nvidia-settings -a [fan:$GPU_ID]/GPUTargetFanSpeed=30 | tr -d [[:space:]])
+check=$(DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings -a [fan:$GPU_ID]/GPUTargetFanSpeed=30 | tr -d [[:space:]])
 
 working="Attribute'GPUTargetFanSpeed'($HOSTNAME:0fan:0)assignedvalue30."
 if [[ $check != *$working ]]; then
@@ -37,6 +37,11 @@ if [[ $check != *$working ]]; then
     exit 1
 fi
 RATE_OF_CHANGE=$(echo "(100-$BASELINE_FAN_PERCENTAGE)/($MAX_GPU_TEMP-$BASELINE_GPU_TEMP)" | bc -l )
+
+timestamp()
+{
+  date +"%Y-%m-%d %T"
+}
 
 while true
 do
@@ -53,10 +58,10 @@ do
       fanSpeed=100
     fi
 
-    echo "setting fan speed to $fanSpeed for gpu $gpu_id"
+    echo "$(timestamp) GPU: $gpu_id | Temp: $degreesC | Fan Speed: $fanSpeed%"
 
     nvidia-settings -a [fan:$gpu_id]/GPUTargetFanSpeed=$fanSpeed > /dev/null
   done
 
-  sleep 8
+  sleep $REFRESH_RATE
 done
