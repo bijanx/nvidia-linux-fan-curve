@@ -24,11 +24,11 @@ export DISPLAY=:0
 export XAUTHORITY=/var/run/lightdm/root/:0
 
 for gpu_id in $GPU_IDS; do
-  DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings -a [gpu:$GPU_ID]/GPUFanControlState=1 > /dev/null
+  nvidia-settings -a [gpu:$GPU_ID]/GPUFanControlState=1 > /dev/null
 done
 
 HOSTNAME=$(hostname)
-check=$(DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings -a [fan:$GPU_ID]/GPUTargetFanSpeed=30 | tr -d [[:space:]])
+check=$(nvidia-settings -a [fan:$GPU_ID]/GPUTargetFanSpeed=30 | tr -d [[:space:]])
 
 working="Attribute'GPUTargetFanSpeed'($HOSTNAME:0fan:0)assignedvalue30."
 if [[ $check != *$working ]]; then
@@ -60,7 +60,7 @@ do
 
     echo "$(timestamp) GPU: $gpu_id | Temp: $degreesC | Fan Speed: $fanSpeed%"
 
-    nvidia-settings -a [fan:$gpu_id]/GPUTargetFanSpeed=$fanSpeed > /dev/null
+     nvidia-settings -a [fan:$gpu_id]/GPUTargetFanSpeed=$fanSpeed > /dev/null
   done
 
   sleep $REFRESH_RATE
