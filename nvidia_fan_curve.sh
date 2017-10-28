@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#put a "sleep 30" here if you run it at startup
-#to make sure this starts after the nvidia driver does
-#sleep 30
-
 #temperature that should trigger 100% GPU fan utilization
 MAX_GPU_TEMP=75
 
